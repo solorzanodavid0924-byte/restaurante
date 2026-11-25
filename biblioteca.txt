@@ -1,0 +1,110 @@
+CREATE DATABASE bd_biblioteca;
+USE bd_biblioteca;
+
+
+CREATE TABLE USUARIO (
+    id_usuario INT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    documento VARCHAR(20) UNIQUE NOT NULL,
+    telefono VARCHAR(20),
+    correo VARCHAR(100) UNIQUE
+);
+
+CREATE TABLE CATEGORIA (
+    id_categoria INT PRIMARY KEY,
+    nombre_categoria VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(200)
+);
+
+CREATE TABLE AUTOR (
+    id_autor INT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    nacionalidad VARCHAR(50)
+);
+
+CREATE TABLE LIBRO (
+    id_libro INT PRIMARY KEY,
+    titulo VARCHAR(150) NOT NULL,
+    isbn VARCHAR(20) UNIQUE NOT NULL,
+    anio_publicacion YEAR,
+    id_categoria INT NOT NULL,
+    id_autor INT NOT NULL
+);
+
+CREATE TABLE PRESTAMOS (
+    id_prestamo INT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    fecha_prestamo DATE NOT NULL,
+    fecha_devolucion DATE NOT NULL,
+    estado VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE DETALLE_PRESTAMOS (
+    id_detalle INT PRIMARY KEY,
+    id_prestamo INT NOT NULL,
+    id_libro INT NOT NULL,
+    cantidad INT NOT NULL
+);
+
+
+ALTER TABLE LIBRO
+ADD CONSTRAINT fk_libro_categoria
+FOREIGN KEY (id_categoria)
+REFERENCES CATEGORIA(id_categoria)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE LIBRO
+ADD CONSTRAINT fk_libro_autor
+FOREIGN KEY (id_autor)
+REFERENCES AUTOR(id_autor)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE PRESTAMOS
+ADD CONSTRAINT fk_prestamos_usuario
+FOREIGN KEY (id_usuario)
+REFERENCES USUARIO(id_usuario)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE DETALLE_PRESTAMOS
+ADD CONSTRAINT fk_detalle_prestamo
+FOREIGN KEY (id_prestamo)
+REFERENCES PRESTAMOS(id_prestamo)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE DETALLE_PRESTAMOS
+ADD CONSTRAINT fk_detalle_libro
+FOREIGN KEY (id_libro)
+REFERENCES LIBRO(id_libro)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+
+INSERT INTO USUARIO VALUES 
+(1, 'Juan', 'Diaz', '1023456789', '3001234567', 'juan.diaz@email.com'),
+(2, 'Camila', 'Torres', '1098765432', '3117654321', 'camila.torres@email.com');
+
+INSERT INTO CATEGORIA VALUES 
+(1, 'Literatura', 'Novelas y cuentos clasicos'),
+(2, 'Tecnologia', 'Libros de programacion y bases de datos');
+
+INSERT INTO AUTOR VALUES 
+(1, 'Gabriel', 'Garcia Marquez', 'Colombiana'),
+(2, 'Silberschatz', 'Abraham', 'Estadounidense');
+
+INSERT INTO LIBRO VALUES 
+(1, 'Cien anos de soledad', '978-0307474728', 1967, 1, 1),
+(2, 'Fundamentos de Bases de Datos', '978-8448190330', 2014, 2, 2);
+
+INSERT INTO PRESTAMOS VALUES 
+(1, 1, '2026-11-20', '2026-11-27', 'Activo'),
+(2, 2, '2026-11-15', '2026-11-22', 'Devuelto');
+
+INSERT INTO DETALLE_PRESTAMOS VALUES 
+(1, 1, 1, 1),
+(2, 2, 2, 1);
